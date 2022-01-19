@@ -132,5 +132,6 @@ func (i *Image) ReplacePixels(args []*driver.ReplacePixelsArgs) {
 		i.graphics.context.flush()
 	}
 	i.graphics.drawCalled = false
+	i.graphics.replacePixelsCalled = true
 	i.graphics.context.texSubImage2D(i.texture, args)
 }

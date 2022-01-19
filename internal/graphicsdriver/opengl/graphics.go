@@ -46,6 +46,8 @@ type Graphics struct {
 	// drawCalled is true just after Draw is called. This holds true until ReplacePixels is called.
 	drawCalled bool
 
+	replacePixelsCalled bool
+
 	uniformVariableNameCache map[int]string
 	textureVariableNameCache map[int]string
 
@@ -174,7 +176,11 @@ func (g *Graphics) uniformVariableName(idx int) string {
 func (g *Graphics) DrawTriangles(dstID driver.ImageID, srcIDs [graphics.ShaderImageNum]driver.ImageID, offsets [graphics.ShaderImageNum - 1][2]float32, shaderID driver.ShaderID, indexLen int, indexOffset int, mode driver.CompositeMode, colorM driver.ColorM, filter driver.Filter, address driver.Address, dstRegion, srcRegion driver.Region, uniforms []driver.Uniform, evenOdd bool) error {
 	destination := g.images[dstID]
 
+	if g.replacePixelsCalled {
+		g.context.flush()
+	}
 	g.drawCalled = true
+	g.replacePixelsCalled = false
 
 	if err := destination.setViewport(); err != nil {
 		return err
