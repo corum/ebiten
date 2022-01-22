@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build darwin && !ios
-// +build darwin,!ios
+//go:build (darwin && !ios) || windows
+// +build darwin,!ios windows
 
 package gamepad
 
@@ -46,7 +46,10 @@ type gamepads struct {
 var theGamepads gamepads
 
 func init() {
-	theGamepads.nativeGamepads.init()
+	if err := theGamepads.nativeGamepads.init(); err != nil {
+		// TODO: Should we ignore the error?
+		panic(err)
+	}
 }
 
 func AppendGamepadIDs(ids []driver.GamepadID) []driver.GamepadID {
